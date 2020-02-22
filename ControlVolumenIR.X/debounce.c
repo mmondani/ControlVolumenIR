@@ -7,7 +7,7 @@ void debounce_Init ( gpio_t* gpio, u8 nivelActivo, u8* puerto, u8 pin )
     gpio->port = puerto;
     gpio->pin = pin;
     gpio->cont = 0;
-    gpio->estado = BAJO;
+    gpio->estado = 0;
     gpio->nivelActivo = nivelActivo;
     gpio->flanco = GPIO_SIN_FLANCO;
 }
@@ -29,34 +29,34 @@ void debounce_Handler (gpio_t* gpio)
     {
         if ( gpio->nivelActivo == GPIO_ALTO_ACTIVO )
         {
-            if (gpio->estado == BAJO)
+            if (gpio->estado == 0)
                 gpio->flanco = GPIO_FLANCO_A_ACTIVO;
 
-            gpio->estado = ALTO;
+            gpio->estado = 1;
         }
         else
         {
-            if (gpio->estado == ALTO)
+            if (gpio->estado == 1)
                 gpio->flanco = GPIO_FLANCO_A_PASIVO;
 
-            gpio->estado = BAJO;
+            gpio->estado = 0;
         }
     }
     else if ((gpio->cont) == 0)
     {
         if ( gpio->nivelActivo == GPIO_ALTO_ACTIVO )
         {
-            if (gpio->estado == ALTO)
+            if (gpio->estado == 1)
                 gpio->flanco = GPIO_FLANCO_A_PASIVO;
 
-            gpio->estado = BAJO;
+            gpio->estado = 0;
         }
         else
         {
-            if (gpio->estado == BAJO)
+            if (gpio->estado == 0)
                 gpio->flanco = GPIO_FLANCO_A_ACTIVO;
 
-            gpio->estado = ALTO;
+            gpio->estado = 1;
         }
     }
 

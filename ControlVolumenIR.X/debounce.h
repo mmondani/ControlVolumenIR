@@ -1,7 +1,7 @@
 #ifndef DEBOUNCE_H
 #define	DEBOUNCE_H
 
-#include "header_v1p0.h"
+#include "basic_definitions.h"
 
 #define         GPIO_ALTO_ACTIVO            1
 #define         GPIO_BAJO_ACTIVO            0

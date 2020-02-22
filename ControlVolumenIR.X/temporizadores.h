@@ -1,7 +1,7 @@
 #ifndef TEMPORIZADOR_H_
 #define TEMPORIZADOR_H_
 
-#include "project.h"
+#include "basic_definitions.h"
 
 // **************************************************
 // Temporizadores

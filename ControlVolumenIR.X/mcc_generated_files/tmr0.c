@@ -111,7 +111,7 @@ void TMR0_ISR(void)
     // Clear the TMR0 interrupt flag
     INTCONbits.TMR0IF = 0;
 
-    TMR0 = timer0ReloadVal;
+    TMR0 += timer0ReloadVal;
 
     // ticker function call;
     // ticker is 1 -> Callback function gets called every time this ISR executes
