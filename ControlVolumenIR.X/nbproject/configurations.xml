@@ -17,6 +17,7 @@
       <itemPath>basic_definitions.h</itemPath>
       <itemPath>debounce.h</itemPath>
       <itemPath>temporizadores.h</itemPath>
+      <itemPath>samsungIrDecoder.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -38,6 +39,7 @@
       <itemPath>main.c</itemPath>
       <itemPath>debounce.c</itemPath>
       <itemPath>temporizadores.c</itemPath>
+      <itemPath>samsungIrDecoder.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
