@@ -9,7 +9,7 @@ typedef struct
 {
 	u16 start;
 	u16 intervalo;
-        u8 state;
+    u8 state;
 }Temporizador;
 
 void    timer_Init      (Temporizador* timer, u16 intervalo);
