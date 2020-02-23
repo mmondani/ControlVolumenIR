@@ -35,6 +35,7 @@ void main(void)
     {
         if (samsungIrDecoder_hasReceived())
         {
+            samsungIrDecoder_clearReceived();
             irWord = samsungIrDecoder_getReceivedWord();
             
             if (irWord == 0)

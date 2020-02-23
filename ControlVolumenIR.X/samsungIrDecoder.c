@@ -77,7 +77,7 @@ void samsungIrDecoder_handler(void)
     {
         if (regent.bits.bitent == 0)
         {
-            if (t_high > (u8)(40*MSEG)) 
+            if (t_high > 10*MSEG)
             {
                 receivingIr = 1;
                 nBits = 0;
@@ -90,7 +90,7 @@ void samsungIrDecoder_handler(void)
     }
     else
     {
-        if (t_high < (u8)(40*MSEG)) 
+        if (t_high < 10*MSEG) 
         {
             // Busco un flanco negativo para determinar que terminó un bit
             if (regent.bits.bitent == 0 && regent.bits.lbitent == 1)
@@ -109,6 +109,7 @@ void samsungIrDecoder_handler(void)
                      * 
                      * Si t_low y t_high difieren en más de 15 cuentas supongo que es un '1'
                     */ 
+                    
                     if (t_high > t_low)
                     {
                         if (t_high - t_low > 15)
@@ -119,14 +120,15 @@ void samsungIrDecoder_handler(void)
                     else
                         bit_clear(irWordAux, 0);
                     
+                    
                 }
                 
                 nBits ++;
                 t_high = 0;
                 t_low = 0;
-                
+
                 // La palabra tiene un bit de start, 32 bits de datos 
-                if (nBits > 50)
+                if (nBits > 33)
                 {
                     receivingIr = 0;
                 }
@@ -149,6 +151,12 @@ void samsungIrDecoder_handler(void)
 u8 samsungIrDecoder_hasReceived(void)
 {
     return (receivedIr == 1);
+}
+
+
+void samsungIrDecoder_clearReceived(void)
+{
+    receivedIr = 0;
 }
 
 

@@ -15,6 +15,7 @@ void samsungIrDecorder_init(void);
 void samsungIrDecoder_handler(void);
 
 u8 samsungIrDecoder_hasReceived(void);
+void samsungIrDecoder_clearReceived(void);
 u32 samsungIrDecoder_getReceivedWord(void);
 
 
