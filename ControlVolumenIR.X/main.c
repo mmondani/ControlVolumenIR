@@ -64,7 +64,8 @@ enum {
     CONTROL_VOLUMEN_IR_IDLE,
     CONTROL_VOLUMEN_IR_RECIBIO,
     CONTROL_VOLUMEN_IR_APRENDER,
-    CONTROL_VOLUMEN_IR_APRENDIO
+    CONTROL_VOLUMEN_IR_APRENDIO,
+    CONTROL_VOLUMEN_IR_GRABAR_VOLUMEN_DEFAULT
 };
 static u8 fsmControlVolumenIr_state = CONTROL_VOLUMEN_IR_INIT;
 static u8 fsmControlVolumenIr_previousState = CONTROL_VOLUMEN_IR_INIT;
@@ -88,7 +89,6 @@ void main(void)
     INTERRUPT_PeripheralInterruptEnable();
 
     digitalVolumeControl_init();
-    digitalVolumeControl_activeState();
     
     eeData_init();
     eeData_checkEEPROM();
@@ -96,7 +96,7 @@ void main(void)
     pulsador_init(&PORTC, 0);
     
     // 500ms entre tecla y tecla
-    timer_Init(&timerNewWord, 500);
+    timer_Init(&timerNewWord, 200);
     
     
     while (1)
@@ -206,6 +206,8 @@ void fsmControlVolumenIr_handler (void)
                 stateIn = 0;
             }
             /**************************************************************/
+            //digitalVolumeControl_activeState();
+            
             fsmControlVolumenIr_cambio (CONTROL_VOLUMEN_IR_IDLE);
             /**************************************************************/
             if (stateOut)
@@ -233,6 +235,10 @@ void fsmControlVolumenIr_handler (void)
                 {
                     nAprendidos = 0;
                     fsmControlVolumenIr_cambio (CONTROL_VOLUMEN_IR_APRENDER);
+                }
+                else if (nPulsos == 7)
+                {
+                    fsmControlVolumenIr_cambio (CONTROL_VOLUMEN_IR_GRABAR_VOLUMEN_DEFAULT);
                 }
             }
             else
@@ -290,8 +296,8 @@ void fsmControlVolumenIr_handler (void)
             {
                 stateIn = 0;
                 
-                timer_Init(&timerState, 400);
-                timer_Init(&timerLed, 50);
+                timer_Init(&timerState, 150);
+                timer_Init(&timerLed, 30);
             }
             /**************************************************************/
             
@@ -393,6 +399,36 @@ void fsmControlVolumenIr_handler (void)
                 stateIn = 1;
                 
                 nAprendidos ++;
+                LED_ROJO_SetLow();
+            }
+            
+            break;
+            
+            
+        case CONTROL_VOLUMEN_IR_GRABAR_VOLUMEN_DEFAULT:
+            if (stateIn)
+            {
+                stateIn = 0;
+                
+                timer_Init(&timerState, 2000);
+                
+                LED_ROJO_SetHigh();
+                
+                digitalVolumeControl_storeValue();
+            }
+            /**************************************************************/
+            if (timer_Expiro(&timerState))
+            {
+                digitalVolumeControl_activeState();
+                fsmControlVolumenIr_cambio (CONTROL_VOLUMEN_IR_IDLE);
+            }   
+                
+            /**************************************************************/
+            if (stateOut)
+            {
+                stateOut = 0;
+                stateIn = 1;
+
                 LED_ROJO_SetLow();
             }
             
