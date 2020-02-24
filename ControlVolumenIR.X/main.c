@@ -5,6 +5,7 @@
 #include "debounce.h";
 #include "temporizadores.h"
 #include "pulsador.h"
+#include "digitalVolumeControl.h"
 
 
 /*******************************************************************/
@@ -18,6 +19,7 @@ void tmr0_isr (void);
 /*******************************************************************/
 static u8 t50us, t1ms, t4ms;
 static u32 irWord;
+static Temporizador timerNewWord;           // Tiempo entre teclas
 
 typedef union {
    uint8_t bytes;
@@ -60,6 +62,7 @@ void fsmControlVolumenIr_cambio (u8 nextState);
 enum {
     CONTROL_VOLUMEN_IR_INIT = 0,
     CONTROL_VOLUMEN_IR_IDLE,
+    CONTROL_VOLUMEN_IR_RECIBIO,
     CONTROL_VOLUMEN_IR_APRENDER,
     CONTROL_VOLUMEN_IR_APRENDIO
 };
@@ -84,10 +87,16 @@ void main(void)
     INTERRUPT_GlobalInterruptEnable();
     INTERRUPT_PeripheralInterruptEnable();
 
+    digitalVolumeControl_init();
+    digitalVolumeControl_activeState();
+    
     eeData_init();
     eeData_checkEEPROM();
     
     pulsador_init(&PORTC, 0);
+    
+    // 500ms entre tecla y tecla
+    timer_Init(&timerNewWord, 500);
     
     
     while (1)
@@ -97,7 +106,11 @@ void main(void)
             samsungIrDecoder_clearReceived();
             irWord = samsungIrDecoder_getReceivedWord();
             
-            events1.bits.event_newWord = 1;
+            if (timer_Expiro(&timerNewWord)) 
+            {
+                timer_Restart(&timerNewWord);
+                events1.bits.event_newWord = 1;
+            }
         }
         
         
@@ -248,11 +261,13 @@ void fsmControlVolumenIr_handler (void)
                     
                     if (irWord == wordUp)
                     {
-                        LED_ROJO_SetHigh();
+                        //digitalVolumeControl_up();
+                        fsmControlVolumenIr_cambio (CONTROL_VOLUMEN_IR_RECIBIO);
                     }
                     else if (irWord == wordDown)
                     {
-                        LED_ROJO_SetLow();
+                        //digitalVolumeControl_down();
+                        fsmControlVolumenIr_cambio (CONTROL_VOLUMEN_IR_RECIBIO);
                     }
                 }
             }
@@ -265,6 +280,36 @@ void fsmControlVolumenIr_handler (void)
             {
                 stateOut = 0;
                 stateIn = 1;
+            }
+            
+            break;
+            
+            
+        case CONTROL_VOLUMEN_IR_RECIBIO:
+            if (stateIn)
+            {
+                stateIn = 0;
+                
+                timer_Init(&timerState, 400);
+                timer_Init(&timerLed, 50);
+            }
+            /**************************************************************/
+            
+            if (timer_Expiro(&timerState))
+                fsmControlVolumenIr_cambio (CONTROL_VOLUMEN_IR_IDLE);
+            else if (timer_Expiro(&timerLed))
+            {
+                timer_Restart(&timerLed);
+                LED_ROJO_Toggle();
+            }
+            
+            /**************************************************************/
+            if (stateOut)
+            {
+                stateOut = 0;
+                stateIn = 1;
+                
+                LED_ROJO_SetLow();
             }
             
             break;
