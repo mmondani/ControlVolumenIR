@@ -261,12 +261,12 @@ void fsmControlVolumenIr_handler (void)
                     
                     if (irWord == wordUp)
                     {
-                        //digitalVolumeControl_up();
+                        digitalVolumeControl_up();
                         fsmControlVolumenIr_cambio (CONTROL_VOLUMEN_IR_RECIBIO);
                     }
                     else if (irWord == wordDown)
                     {
-                        //digitalVolumeControl_down();
+                        digitalVolumeControl_down();
                         fsmControlVolumenIr_cambio (CONTROL_VOLUMEN_IR_RECIBIO);
                     }
                 }

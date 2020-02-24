@@ -62,18 +62,21 @@ void digitalVolumeControl_storeValue(void)
     POT1_UD_SetHigh();
     NOP();
     NOP();
-    POT1_CS_SetHigh();
-    NOP();
-    NOP();
-    
-    
+
     POT2_INC_SetHigh();
     NOP();
     NOP();
     POT2_UD_SetHigh();
     NOP();
     NOP();
+    
+    
+    DELAY_microseconds(100);
+    
     POT2_CS_SetHigh();
+    NOP();
+    NOP();
+    POT1_CS_SetHigh();
     NOP();
     NOP();
 }
@@ -93,6 +96,9 @@ void digitalVolumeControl_up(void)
     POT2_UD_SetHigh();
     NOP();
     NOP();
+    
+    
+    DELAY_microseconds(100);
     
     
     POT1_INC_SetLow();
@@ -128,6 +134,7 @@ void digitalVolumeControl_down(void)
     NOP();
     NOP();
     
+    DELAY_microseconds(100);
     
     POT1_INC_SetLow();
     NOP();
